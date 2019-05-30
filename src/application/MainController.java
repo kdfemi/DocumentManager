@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -23,12 +24,12 @@ public class MainController {
 	String dbUrl = "jdbc:mysql://localhost:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	static String dbuser = "root";
 	static String dbpassword ="pass";
-	
+	int userId;
 	@FXML
 	TextField txtUsername,txtPassword ;
 	@FXML
 	Label lblStatus, lblError;
-	
+	static String user ;
 	@FXML
 	private void onLogin(ActionEvent e){
 		
@@ -42,8 +43,12 @@ public class MainController {
 				
 				if(userExist(username, password)) {
 					try {
+						((Node)e.getSource()).getScene().getWindow().hide();
 						Stage primaryStage = new Stage();
-						Parent root = FXMLLoader.load(getClass().getResource("userPage.fxml"));
+						FXMLLoader loader = new FXMLLoader();
+						Parent root = loader.load(getClass().getResource("userPage.fxml").openStream());
+						UserPageController userPageController = (UserPageController)loader.getController();
+						userPageController.getUser(username, userId);
 						Scene scene = new Scene(root);
 						scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 						primaryStage.setScene(scene);
@@ -86,7 +91,8 @@ public class MainController {
 				//stores name and password from database
 				userNameString = result.getString("username");
 				passwordString = result.getString("password");
-				
+				user =  result.getString("username");
+				userId = result.getInt("id");
 				//verify name and password equals any account on the db
 				if(userNameString.equals(username) && passwordString.equals(password)) return true;
 					
