@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,15 +24,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -45,46 +40,23 @@ public class UserPageController implements Initializable {
 	static String dbpassword ="pass";
 	int userId;
 	private String user;
+	private ObservableList<String> listFiles = FXCollections.observableArrayList();
+	Alert alert = new Alert(AlertType.NONE); 
+	
 	@FXML Label lblUsername;
 	@FXML Button logout, create, delete, upload;
-	@FXML TableView <Files>table;
-	@FXML private TableColumn<Files, File>fileName;
-	@FXML private TableColumn<Files, Boolean> status;
+	@FXML ListView<String> lvFiles;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-//		table.getSelectionModel().getSelected
-		table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-				// TODO Auto-generated method stub
-		           TableViewSelectionModel<Files> selectionModel = table.getSelectionModel();
-		           ObservableList<?> selectedCells = selectionModel.getSelectedCells();
-		           TablePosition<Object, ?> tablePosition = (TablePosition<Object, ?>) selectedCells.get(0);
-		           Object val = tablePosition.getTableColumn().getCellData(newValue);
-		           Object val2 = tablePosition.getTableColumn().getCellData(newValue);
-		           
-		          
-		           System.out.println("Selected Value " + val);
-			}
-			
-		});
+
 //		System.out.println(files);
 //		lblUsername.setText(MainController.user);	
-		try {
-			//connect to database and prepstatement collect all files and set it to a table
-			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
-			PreparedStatement statement = connect.prepareStatement("SELECT * FROM user where id=?");
-			statement.setInt(1, userId);
-			ResultSet rs  = statement.executeQuery();
-			
-		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		lvFiles.setItems(listFiles);
+		getFiles();
+
 	}
-	
+//	
 	@FXML
 	public void signOut(ActionEvent event) {
 
@@ -114,48 +86,117 @@ public class UserPageController implements Initializable {
 		 FileChooser fc = new FileChooser();
 		 fc.setInitialDirectory(new File(System.getProperty("user.home")+"/desktop"));
 		 fc.getExtensionFilters().addAll(new ExtensionFilter("Documents","*.pdf","*.doc","*.docx","*.txt","*.xls","*.ppt"));
-		List<File> selectedFile  = fc.showOpenMultipleDialog(null);
+		List<File> selectedFiles  = fc.showOpenMultipleDialog(null);
 		Connection connect = null;
 		PreparedStatement statement=null;
 		try {
 			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
-		 statement = connect.prepareStatement("SELECT * FROM user where id=?");
-		 statement.setInt(1, userId);
-		} catch (SQLException e1) {
+		 statement = connect.prepareStatement("INSERT INTO files(filename, file, uploaderId, owner) VALUES(?,?,?,?)");
+		 //set the id of the file creator 
+		 statement.setInt(3, userId);
+		 statement.setString(4, user);
+		 if(selectedFiles !=null) {
+				
+			  listFiles.addAll(selectedFiles.iterator().next().getName()+"\t\t\t"+ "~YOU");
+			//write to listView
+//				lvFiles.setItems(listFiles);			
+			 for(File selectedFile : selectedFiles) {
+
+					 //storing file in inputStream to be stored in db
+					InputStream inputStream = new FileInputStream(new File(selectedFile.getPath()));
+					//store in db
+					statement.setString(1, selectedFile.getName());
+					statement.setBlob(2, inputStream);
+					statement.executeUpdate();
+			 }
+		 }
+		} catch (SQLException | FileNotFoundException e1) {
 			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		
-		
-		
-		fileName.setCellValueFactory(new PropertyValueFactory<Files, File>("name"));
-		status.setCellValueFactory(new PropertyValueFactory<Files, Boolean>("status"));
-		
-		 if(selectedFile !=null) {
-			 for(int i =0; i< selectedFile.size(); i++) {
-				 table.getItems().addAll(new Files(selectedFile.get(i).getAbsoluteFile(), false));
-				 try {
-					InputStream inputStream = new FileInputStream(new File(selectedFile.get(i).getPath()));
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			 }	
-		 }
+
 	}
 	
 	@FXML
 	public void onDelete(ActionEvent event) {
-		
+		String file = lvFiles.getSelectionModel().getSelectedItem();
+		Connection connect = null;
+		PreparedStatement statement=null;
+		try {
+			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword); 
+			statement = connect.prepareStatement("DELETE FROM files where filename=? AND uploaded>0");
+			statement.setString(1, file);
+			int l = statement.executeUpdate();
+			if(l<1) {
+				alert.setAlertType(AlertType.ERROR);
+				alert.setContentText("cannot delete");
+				alert.show();
+			}
+			else {
+				alert.setAlertType(AlertType.INFORMATION);
+				alert.setContentText("File deleted");
+				alert.show();
+			}
+			getFiles();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 	}
 	
 	@FXML
 	public void onUpload(ActionEvent event) {
 		
+		try {
+			String file = lvFiles.getSelectionModel().getSelectedItem();
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			PreparedStatement statement = connect.prepareStatement("UPDATE files SET uploaded=1 where uploaderId=? AND filename=? ");
+			statement.setInt(1, userId);
+			statement.setString(2, file);
+			int done = statement.executeUpdate();
+			if(done<1) {
+				alert.setAlertType(AlertType.ERROR);
+				alert.setContentText("Not done");
+				alert.show();
+			}
+			else {
+				alert.setAlertType(AlertType.INFORMATION);
+				alert.setContentText("Done");
+				alert.show();
+			}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 	}
 	public void getUser(String user, int id) {
 		lblUsername.setText("Welcome "+user);
 		this.user = user;
+		this.userId = id;
+	}
+	
+	public void getFiles() {
+		try {
+			//connect to database and prepstatement collect all files and set it to a table
+			listFiles.clear();
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			PreparedStatement statement = connect.prepareStatement("SELECT * FROM files where uploaderId=? OR uploaded > 0");
+			statement.setInt(1, userId);
+			ResultSet rs  = statement.executeQuery();
+			while(rs.next()) {
+				listFiles .add(rs.getString("filename"));
+			}
+//			lvFiles.setItems(listFiles);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 		
