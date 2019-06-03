@@ -1,8 +1,10 @@
 package application;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,8 +25,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -86,6 +86,48 @@ public class UserPageController implements Initializable {
 		        public void handle(MouseEvent event) {
 		    		upload.setDisable(false);
 		    		delete.setDisable(false);
+		    		if(event.getClickCount()>1) {
+		    			FileOutputStream fileStream = null;
+						try {
+							String filename = lvFiles.getSelectionModel().getSelectedItem().split("\t")[0];
+							String owner = lvFiles.getSelectionModel().getSelectedItem().split("\t")[1].trim().split("~")[1].toLowerCase();
+							if(owner.equals("you")) owner = user;
+							System.out.println(owner);
+							Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+							PreparedStatement statement = connect.prepareStatement("SELECT * FROM files where filename=? and owner = ?");
+							statement.setString(1, filename);
+							statement.setString(2, owner);
+							ResultSet rs  = statement.executeQuery();
+							File myFile = new File(filename);
+							fileStream = new FileOutputStream(myFile);
+		    			while(rs.next()) {
+		    				InputStream theFile = rs.getBinaryStream("file");
+		    				byte [] buffer = new byte[1024];
+		    				while(theFile.read(buffer)>0) {
+		    					fileStream.write(buffer);
+		    				}
+		    				if (Desktop.isDesktopSupported()) {
+		    				    try {
+		    				       
+		    				        Desktop.getDesktop().open(myFile);
+		    				    } catch (IOException ex) {
+		    				        // no application registered for PDFs
+		    				    }
+		    				}
+		    			}
+						} catch (SQLException | IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}finally {
+							try {
+								fileStream.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+		    		
+		    		}
 		        }
 		    });
 
@@ -280,22 +322,22 @@ public class UserPageController implements Initializable {
 	private ArrayList<String> tabCount(ObservableList<String>contents) {
 		ArrayList<String>contents2 = new ArrayList<>();
 		int longest =0;
-		String tabs="\t";
-		System.out.println("tab1 "+tabs.length());
 		//getting longest
 		for(String content : contents) {
-			if(longest < content.split("%S")[0].length()) {
-				longest = content.trim().length();
+			if(longest < content.trim().split("%S")[0].length()) {
+				longest = content.trim().split("%S")[0].length();
 			}		
 		}
-		System.out.println("longes "+longest);
+		System.out.println("longes "+longest+"\n********************************************");
 		
 		for(String content : contents) {
+			String tabs="\t";
 			int width = (longest-content.trim().split("%S")[0].length())+3;	
+			System.out.println("content "+content.trim().split("%S")[0].length());
 			System.out.println("width "+width);
 			tabs += String.format( "%"+width+ "s","");
 			String text = content.replace("%S", tabs);	
-			System.out.println("tab2 "+tabs.length());
+			System.out.println("tab2 "+tabs.length()+"\n********************************************");
 			contents2.add(text);
 		}
 		contents.clear();
