@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,15 +22,28 @@ import javafx.stage.Stage;
 
 public class MainController {
 
+	private final Stage primaryStage;
 	String dbUrl = "jdbc:mysql://localhost:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	static String dbuser = "root";
 	static String dbpassword ="pass";
 	int userId;
+	
 	@FXML
 	TextField txtUsername,txtPassword ;
 	@FXML
 	Label lblStatus, lblError;
 	static String user ;
+	public MainController() throws IOException {
+		primaryStage = new Stage();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
+		loader.setController(this);
+		Scene scene = new Scene(loader.load());
+		primaryStage.setTitle("Document Manager -signin");
+		primaryStage.centerOnScreen();
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		primaryStage.setScene(scene);
+	}
+
 	@FXML
 	private void onLogin(ActionEvent e){
 		
@@ -43,16 +57,9 @@ public class MainController {
 				
 				if(userExist(username, password)) {
 					try {
-						((Node)e.getSource()).getScene().getWindow().hide();
-						Stage primaryStage = new Stage();
-						FXMLLoader loader = new FXMLLoader();
-						Parent root = loader.load(getClass().getResource("userPage.fxml").openStream());
-						UserPageController userPageController = (UserPageController)loader.getController();
-						userPageController.getUser(username, userId);
-						Scene scene = new Scene(root);
-						scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-						primaryStage.setScene(scene);
-						primaryStage.show();
+						UserPageController userPageController = new UserPageController(new User(username,userId));
+						userPageController.showStage();
+						primaryStage.hide();
 					} catch(Exception e1) {
 						e1.printStackTrace();
 					}
@@ -104,5 +111,10 @@ public class MainController {
 			return null;
 		}
 		return false;
+	}
+
+	public void showStage() {
+
+		primaryStage.show();
 	}
 }
