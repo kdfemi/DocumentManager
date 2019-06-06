@@ -22,7 +22,7 @@ public class MainController {
 	String dbUrl = "jdbc:mysql://localhost:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	static String dbuser = "root";
 	static String dbpassword ="pass";
-	int userId;
+	int userId; //checking something
 	
 	@FXML
 	TextField txtUsername,txtPassword ;
