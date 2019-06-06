@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="lblUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="18.0" layoutY="14.0" prefHeight="50.0" prefWidth="764.0" text="Label" textAlignment="CENTER" textFill="#ed8e5f">
+         <font>
+            <Font name="Californian FB" size="32.0" />
+         </font></Label>
+      <Button fx:id="logout" layoutX="297.0" layoutY="542.0" mnemonicParsing="false" onAction="#signOut" prefHeight="32.0" prefWidth="206.0" text="Logout" />
+      <Button fx:id="create" layoutX="61.0" layoutY="190.0" mnemonicParsing="false" onAction="#onCreate" text="Create" />
+      <Button fx:id="upload" layoutX="61.0" layoutY="229.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" />
+      <Button fx:id="delete" layoutX="63.0" layoutY="264.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" />
+      <ListView fx:id="lvFiles" layoutX="177.0" layoutY="107.0" prefHeight="394.0" prefWidth="539.0" />
+      <Button layoutX="643.0" layoutY="501.0" mnemonicParsing="false" onAction="#listUser" prefHeight="32.0" prefWidth="73.0" style="-fx-background-color: white;" text="View users" />
+   </children>
+</AnchorPane>

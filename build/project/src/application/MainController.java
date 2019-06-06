@@ -37,7 +37,6 @@ public class MainController {
 		Scene scene = new Scene(loader.load());
 		primaryStage.setTitle("Document Manager -signin");
 		primaryStage.centerOnScreen();
-		primaryStage.setResizable(false);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		
@@ -78,28 +77,21 @@ public class MainController {
 		Alert alert = new Alert(AlertType.NONE);
 		lblStatus.setText("");
 		try {
-			if(!username.isEmpty() && !password.isEmpty()) {
-				
-				if(username.length()>=4 && username.length()>=4) {
-					
-					Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
-					PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
-					statement.setString(1, username);
-					statement.setString(2, password);
-					int result = statement.executeUpdate();
 			
-					lblStatus.setText("user Created. Login to continue");
-					txtUsername.clear();
-					txtPassword.clear();
-					alert.setAlertType(AlertType.INFORMATION);
-					alert.setContentText("user Created\nLogin to continue");
-					alert.setTitle("Account info");
-					alert.setHeaderText("Account Created");
-					alert.show();
-				}else lblStatus.setText("Username and password must be 4 or more charcters long");
-					
-				}else lblStatus.setText("field cannot be empty");	
-
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
+			statement.setString(1, username);
+			statement.setString(2, password);
+			int result = statement.executeUpdate();
+			
+			lblStatus.setText("user Created. Login to continue");
+			txtUsername.clear();
+			txtPassword.clear();
+			alert.setAlertType(AlertType.INFORMATION);
+			alert.setContentText("user Created\nLogin to continue");
+			alert.setTitle("Account info");
+			alert.setHeaderText("Account Created");
+			alert.show();
 				
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -58,19 +58,18 @@ public class UserPageController implements Initializable {
 	
 	public UserPageController(User user)  {
 	
-	try {	
-		primaryStage = new Stage();
+	try {	primaryStage = new Stage();
 		this.userId = user.getId();
 		this.user = user.getUser();
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("userPage.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("UserPage.fxml"));
 		loader.setController(this);
-		primaryStage.setScene(new Scene(loader.load())); 
+		primaryStage.setScene(new Scene(loader.load()));
 		//working
 //		Scene scene = new Scene(loader.load()); //why not working
 		primaryStage.setTitle("Document Manager");
-		primaryStage.centerOnScreen();
-		}catch(IOException e) {
-			e.printStackTrace();
+		primaryStage.centerOnScreen();}catch(IOException e) {
+			alert.setContentText(e.getMessage());
+			alert.show();
 		}
 		
 		
