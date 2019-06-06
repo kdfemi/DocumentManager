@@ -96,6 +96,8 @@ public class MainController {
 				lblStatus.setText("username exist try another username");
 				txtUsername.clear();
 				txtPassword.clear();
+			}else {
+				lblError.setText("Cannot connect to database");
 			}
 		}
 		

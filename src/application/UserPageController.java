@@ -91,13 +91,13 @@ public class UserPageController implements Initializable {
 		    			FileOutputStream fileStream = null;
 						try {
 							String filename = lvFiles.getSelectionModel().getSelectedItem().split("\t")[0];
-							String owner = lvFiles.getSelectionModel().getSelectedItem().split("\t")[1].trim().split("~")[1].toLowerCase();
-							if(owner.equals("you")) owner = user;
-							System.out.println(owner);
+//							String owner = lvFiles.getSelectionModel().getSelectedItem().split("\t")[1].trim().split("~")[1].toLowerCase();
+//							if(owner.equals("you")) owner = user;
+//							System.out.println(owner);
 							Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
-							PreparedStatement statement = connect.prepareStatement("SELECT * FROM files where filename=? and owner = ?");
+							PreparedStatement statement = connect.prepareStatement("SELECT * FROM files where filename=?");
 							statement.setString(1, filename);
-							statement.setString(2, owner);
+//							statement.setString(2, owner);
 							ResultSet rs  = statement.executeQuery();
 							File myFile = new File(filename);
 							fileStream = new FileOutputStream(myFile);
@@ -190,9 +190,10 @@ public class UserPageController implements Initializable {
 		 statement.setInt(3, userId);
 		 statement.setString(4, user);
 		 if(selectedFiles !=null) {
-				
-			  listFiles.addAll(selectedFiles.iterator().next().getName()+"%S~YOU");
-			//write to listView
+			 
+				//write to listView
+			  listFiles.addAll(selectedFiles.iterator().next().getName());
+			
 //				lvFiles.setItems(listFiles);			
 			 for(File selectedFile : selectedFiles) {
 
@@ -203,7 +204,7 @@ public class UserPageController implements Initializable {
 					statement.setBlob(2, inputStream);
 					statement.executeUpdate();
 			 }
-			 tabCount(listFiles);
+//			 tabCount(listFiles);
 		 }
 		} catch (SQLException | FileNotFoundException e1) {
 			// TODO Auto-generated catch block
@@ -211,7 +212,6 @@ public class UserPageController implements Initializable {
 			e1.printStackTrace();
 		}
 		
-
 	}
 	
 	@FXML
@@ -323,15 +323,15 @@ public class UserPageController implements Initializable {
 			statement.setInt(1, userId);
 			ResultSet rs  = statement.executeQuery();
 			while(rs.next()) {
-				String owner = rs.getString("owner");
-				if(!owner.equals(user)) {
-					listFiles.add(rs.getString("filename")+"%S~"+owner);
-					continue;
-				}
-				listFiles.add(rs.getString("filename")+"%S~YOU");
+//				String owner = rs.getString("owner");
+//				if(!owner.equals(user)) {
+//					listFiles.add(rs.getString("filename")+"%S~"+owner);
+//					continue;
+//				}
+				listFiles.add(rs.getString("filename"));
 //				listFiles.add(rs.getString("filename")+tabCount(listFiles)+"~YOU");	
 			}//update list to format spacing
-			tabCount(listFiles);
+//			tabCount(listFiles);
 //			lvFiles.setItems(listFiles);
 		} catch (SQLException e) {
 			
@@ -344,32 +344,32 @@ public class UserPageController implements Initializable {
 		primaryStage.show();
 	}
 	
-	private ArrayList<String> tabCount(ObservableList<String>contents) {
-		ArrayList<String>contents2 = new ArrayList<>();
-		int longest =0;
-		//getting longest
-		for(String content : contents) {
-			if(longest < content.trim().split("%S")[0].length()) {
-				longest = content.trim().split("%S")[0].length();
-			}		
-		}
-		System.out.println("longes "+longest+"\n********************************************");
-		
-		for(String content : contents) {
-			String tabs="\t";
-			int width = (longest-content.trim().split("%S")[0].length())+3;	
-			System.out.println("content "+content.trim().split("%S")[0].length());
-			System.out.println("width "+width);
-			tabs += String.format( "%"+width+ "s","");
-			String text = content.replace("%S", tabs);	
-			System.out.println("tab2 "+tabs.length()+"\n********************************************");
-			contents2.add(text);
-		}
-		contents.clear();
-		contents.addAll(contents2);
-		return contents2;
-		
-	}
+//	private ArrayList<String> tabCount(ObservableList<String>contents) {
+//		ArrayList<String>contents2 = new ArrayList<>();
+//		int longest =0;
+//		//getting longest
+//		for(String content : contents) {
+//			if(longest < content.trim().split("%S")[0].length()) {
+//				longest = content.trim().split("%S")[0].length();
+//			}		
+//		}
+//		System.out.println("longes "+longest+"\n********************************************");
+//		
+//		for(String content : contents) {
+//			String tabs="\t";
+//			int width = (longest-content.trim().split("%S")[0].length())+3;	
+//			System.out.println("content "+content.trim().split("%S")[0].length());
+//			System.out.println("width "+width);
+//			tabs += String.format( "%"+width+ "s","");
+//			String text = content.replace("%S", tabs);	
+//			System.out.println("tab2 "+tabs.length()+"\n********************************************");
+//			contents2.add(text);
+//		}
+//		contents.clear();
+//		contents.addAll(contents2);
+//		return contents2;
+//		
+//	}
 
 		
 
