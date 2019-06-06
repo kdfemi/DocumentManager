@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="lblUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="18.0" layoutY="14.0" prefHeight="50.0" prefWidth="764.0" text="Label" textAlignment="CENTER" textFill="#ed8e5f">
          <font>
@@ -17,5 +17,6 @@
       <Button fx:id="upload" layoutX="61.0" layoutY="229.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" />
       <Button fx:id="delete" layoutX="63.0" layoutY="264.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" />
       <ListView fx:id="lvFiles" layoutX="177.0" layoutY="107.0" prefHeight="394.0" prefWidth="539.0" />
+      <Button layoutX="643.0" layoutY="501.0" mnemonicParsing="false" onAction="#listUser" prefHeight="32.0" prefWidth="73.0" style="-fx-background-color: white;" text="View users" />
    </children>
 </AnchorPane>

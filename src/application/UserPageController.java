@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,6 +101,7 @@ public class UserPageController implements Initializable {
 							ResultSet rs  = statement.executeQuery();
 							File myFile = new File(filename);
 							fileStream = new FileOutputStream(myFile);
+								myFile.deleteOnExit();
 		    			while(rs.next()) {
 		    				InputStream theFile = rs.getBinaryStream("file");
 		    				byte [] buffer = new byte[1024];
@@ -144,6 +146,29 @@ public class UserPageController implements Initializable {
 			e.printStackTrace();
 		}
 		
+	}
+	@FXML
+	public void listUser() {
+		
+		Alert alert = new Alert(AlertType.NONE);
+		String userList = "";
+		try{
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			Statement statement = connect.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM user");
+			int index = 1;
+			while(result.next()) {
+				userList += index+" "+result.getString("username")+"\n";
+				index++;
+			}
+		}catch(SQLException e) {
+			
+		}
+		alert.setContentText(userList);
+		ButtonType cancel = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
+		alert.getButtonTypes().add(cancel);
+		System.out.println("clicked");
+		alert.show();
 	}
 	
 	/**

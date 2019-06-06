@@ -10,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -65,6 +67,40 @@ public class MainController {
 			}else lblStatus.setText("field cannot be empty");	
 	}
 	
+	@FXML
+	public void onCreate() {
+		String username = txtUsername.getText();
+		String password = txtPassword.getText();
+		Alert alert = new Alert(AlertType.NONE);
+		lblStatus.setText("");
+		try {
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
+			statement.setString(1, username);
+			statement.setString(2, password);
+			int result = statement.executeUpdate();
+			
+			lblStatus.setText("user Created. Login to continue");
+			txtUsername.clear();
+			txtPassword.clear();
+			alert.setAlertType(AlertType.INFORMATION);
+			alert.setContentText("user Created\nLogin to continue");
+			alert.setTitle("Account info");
+			alert.setHeaderText("Account Created");
+			alert.show();
+				
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+			if(e.getMessage().equals("Duplicate entry 'janeDoe' for key 'PRIMARY'")) {
+				lblStatus.setText("username exist try another username");
+				txtUsername.clear();
+				txtPassword.clear();
+			}
+		}
+		
+	}
+	
 	/**
 	 * Return true if user exist.
 	 * @param username
@@ -81,7 +117,7 @@ public class MainController {
 			statement.setString(2, password);
 			ResultSet result = statement.executeQuery();
 			
-			lblStatus.setText(""); //for testing purposes
+			lblStatus.setText("");
 			
 			//stores username and password from database
 			String passwordString = null;
