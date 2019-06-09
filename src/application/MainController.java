@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.prefs.Preferences;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +21,10 @@ import javafx.stage.Stage;
 public class MainController {
 
 	private final Stage primaryStage;
-	String dbUrl = "jdbc:mysql://10.152.2.39:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-	static String dbuser = "user";
-	static String dbpassword ="pass"; 
+	private final Preferences preferences;
+	private final String dbUrl;
+	private final String dbuser ;
+	private final String dbpassword ;
 	int userId; //checking something
 	
 	@FXML
@@ -30,6 +33,12 @@ public class MainController {
 	Label lblStatus, lblError;
 	static String user ;
 	public MainController() throws IOException {
+		
+		preferences = Preferences.userRoot().node("DocumentManager");
+		this.dbpassword = preferences.get("password","pass");
+		this.dbuser = preferences.get("username","user");
+		this.dbUrl = "jdbc:mysql://"+preferences.get("ip","10.152.2.39")+":"+preferences.get("port","3306")+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		
 		primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
 		System.out.println(getClass().getName()+"check" );
@@ -48,7 +57,7 @@ public class MainController {
 		
 		lblStatus.setText("");
 		String username = txtUsername.getText();
-		String password = txtPassword.getText();
+		String password = txtPassword.getText(); 
 		
 		if(!username.isEmpty() && !password.isEmpty()) {
 			
@@ -113,6 +122,12 @@ public class MainController {
 			}
 		}
 		
+	}
+	
+	@FXML
+	public void onSettings() throws IOException {
+		SettingsController settingsController = new SettingsController();
+		settingsController.showStage();
 	}
 	
 	/**

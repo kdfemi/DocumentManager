@@ -20,26 +20,27 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Button layoutX="128.0" layoutY="249.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="25.0" prefWidth="84.0" text="LOGIN" textFill="#dd1616" />
-      <TextField fx:id="txtUsername" layoutX="100.0" layoutY="149.0" prefHeight="25.0" prefWidth="248.0" promptText="janeDoe" />
+      <Button layoutX="128.0" layoutY="249.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="25.0" prefWidth="84.0" styleClass="buttons" text="LOGIN" textFill="#dd1616" />
+      <TextField fx:id="txtUsername" layoutX="100.0" layoutY="149.0" prefHeight="25.0" prefWidth="248.0" promptText="janeDoe" styleClass="txt-fields" />
       <Separator layoutX="6.0" layoutY="73.0" prefHeight="8.0" prefWidth="389.0" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="187.0" text="password" textFill="#e84a4a">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="187.0" styleClass="lb-id" text="password" textFill="#e84a4a">
          <font>
             <Font name="System Italic" size="15.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="148.0" text="username" textFill="#e84a4a">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="148.0" styleClass="lb-id" text="username" textFill="#e84a4a">
          <font>
             <Font name="System Italic" size="15.0" />
          </font>
       </Label>
-      <PasswordField fx:id="txtPassword" layoutX="100.0" layoutY="188.0" prefHeight="25.0" prefWidth="248.0" promptText="password" />
+      <PasswordField fx:id="txtPassword" layoutX="100.0" layoutY="188.0" prefHeight="25.0" prefWidth="248.0" promptText="password" styleClass="txt-fields" />
       <Label fx:id="lblStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="213.0" prefHeight="36.0" prefWidth="389.0" textAlignment="JUSTIFY" textFill="#eb0505" wrapText="true" />
       <Label fx:id="lblError" alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="282.0" prefHeight="99.0" prefWidth="389.0" textAlignment="JUSTIFY" textFill="#eb0505" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Button fx:id="btnCreate" layoutX="224.0" layoutY="249.0" mnemonicParsing="false" onAction="#onCreate" prefHeight="25.0" prefWidth="84.0" text="SIGN UP" textFill="#dd1616" />
+      <Button fx:id="btnCreate" layoutX="224.0" layoutY="249.0" mnemonicParsing="false" onAction="#onCreate" prefHeight="25.0" prefWidth="84.0" styleClass="buttons" text="SIGN UP" textFill="#dd1616" />
+      <Button layoutX="316.0" layoutY="77.0" mnemonicParsing="false" onAction="#onSettings" prefHeight="25.0" prefWidth="84.0" styleClass="buttons" text="settings" textFill="#dd1616" />
    </children>
 </AnchorPane>

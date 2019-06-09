@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,9 +42,10 @@ import javafx.stage.Stage;
 
 public class UserPageController implements Initializable {
 	
-	String dbUrl = "jdbc:mysql://10.152.2.39:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-	static String dbuser = "user";
-	static String dbpassword ="pass"; 
+	private final String dbUrl;
+	private final String dbuser ;
+	private final String dbpassword ;
+	private final Preferences preferences;
 	int userId;
 	private String user;
 	private ObservableList<String> listFiles = FXCollections.observableArrayList();
@@ -58,15 +60,20 @@ public class UserPageController implements Initializable {
 	
 	public UserPageController(User user)  {
 	
+		preferences = Preferences.userRoot().node("DocumentManager");
+		this.dbpassword = preferences.get("password","pass");
+		this.dbuser = preferences.get("username","user");
+		this.dbUrl = "jdbc:mysql://"+preferences.get("ip","10.152.2.39")+":"+preferences.get("port","3306")+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		
 	try {	
 		primaryStage = new Stage();
 		this.userId = user.getId();
 		this.user = user.getUser();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("userPage.fxml"));
 		loader.setController(this);
-		primaryStage.setScene(new Scene(loader.load())); 
-		//working
-//		Scene scene = new Scene(loader.load()); //why not working
+		Scene scene = new Scene(loader.load()); 
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		primaryStage.setScene(scene);
 		primaryStage.setTitle("Document Manager");
 		primaryStage.centerOnScreen();
 		}catch(IOException e) {
