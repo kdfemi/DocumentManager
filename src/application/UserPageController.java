@@ -8,6 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,7 +23,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.sun.javafx.runtime.SystemProperties;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,6 +44,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -53,11 +64,11 @@ public class UserPageController implements Initializable {
 	private ObservableList<String> listFiles = FXCollections.observableArrayList();
 	Alert alert = new Alert(AlertType.NONE); 
 	Alert prompt = new Alert(AlertType.NONE);  
-	
+	List <File> tempList = new ArrayList<>();
 	@FXML Label lblUsername;
 	@FXML Button logout, create, delete, upload;
 	@FXML ListView<String> lvFiles;
-	
+	@FXML CheckBox cbDeleteFile;
 	private Stage primaryStage;
 	private Scene scene;
 	 
@@ -100,6 +111,7 @@ public class UserPageController implements Initializable {
 		lblUsername.setText("Welcome "+this.user);
 		lvFiles.setItems(listFiles);
 		getFiles();
+		cbDeleteFile.setSelected(preferences.getBoolean("deleteFileAfter",false));
 		System.out.println(user+" and "+userId);
 		disableButtons();
 
@@ -122,14 +134,24 @@ public class UserPageController implements Initializable {
 							statement.setString(1, filename);
 //							statement.setString(2, owner);
 							ResultSet rs  = statement.executeQuery();
-							File myFile = new File(filename);
+							File myFile=null;
+							//temp files
+							if(cbDeleteFile.isSelected()) {
+								myFile = File.createTempFile("temp~",filename);
+								myFile.deleteOnExit(); 
+								Path path = Paths.get(myFile.getAbsolutePath());
+								Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+								tempList.add(myFile);
+								}else myFile = new File(filename);
+							getNewName(myFile);
 							fileStream = new FileOutputStream(myFile);
-							myFile.deleteOnExit();
+							
 		    			while(rs.next()) {
 		    				InputStream theFile = rs.getBinaryStream("file");
 		    				byte [] buffer = new byte[1024];
 		    				while(theFile.read(buffer)>0) {
 		    					fileStream.write(buffer);
+		    	
 		    				}
 		    				if (Desktop.isDesktopSupported()) {
 		    				    try {
@@ -155,12 +177,14 @@ public class UserPageController implements Initializable {
 		    		}
 		        }
 		    });
-
 	}
 //	
 	@FXML
 	public void signOut(ActionEvent event) throws SQLException {
 		try {
+			for(File file:tempList) {
+				file.delete();
+			}
 			MainController mainController = new MainController();
 			mainController.showStage();
 			primaryStage.hide();
@@ -334,6 +358,13 @@ public class UserPageController implements Initializable {
 			}
 
 	}
+	
+	@FXML
+	public void onCheck(ActionEvent e) {
+		if(cbDeleteFile.isSelected()) {
+			preferences.putBoolean("deleteFileAfter",true);
+		}else {preferences.putBoolean("deleteFileAfter",false);}
+	}
 	public void getUser() {
 		lblUsername.setText("Welcome "+this.user);
 	}
@@ -374,4 +405,26 @@ public void disableButtons() {
 }
 		
 
+String getNewName(File file) {
+	String filename="";
+	final Pattern PATTERN = Pattern.compile("(.*?)(?:\\((\\d+)\\))?(\\.[^.]*)?");
+    if (file.exists()) {
+        Matcher m = PATTERN.matcher(file.getName());
+        if (m.matches()) {
+            String prefix = m.group(1);
+            String last = m.group(2);
+            String suffix = m.group(3);
+            if (suffix == null) suffix = "";
+
+            int count = last != null ? Integer.parseInt(last) : 0;
+
+            do {
+                count++;
+                filename = prefix + "(" + count + ")" + suffix;
+                file.renameTo(new File(filename));
+            } while (file.exists());
+        }
+    }
+    return filename;
+}
 }

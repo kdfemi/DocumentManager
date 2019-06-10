@@ -64,12 +64,11 @@ public class MainController {
 	} 
 	@FXML
 	public void initialize(){
-		System.out.println("Worked");
 		StringBuilder sb = new StringBuilder();
 		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
 		String so ="";
 		try {
-		
+	
 			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 			Statement statement = connect.createStatement();

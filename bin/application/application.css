@@ -31,3 +31,8 @@
 #table{
     -fx-font-size: 14px;
 }
+.cb-delete-file{
+     -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: Monospaced;
+}

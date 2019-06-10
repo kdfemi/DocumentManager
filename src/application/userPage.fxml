@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -18,5 +19,6 @@
       <Button fx:id="delete" layoutX="63.0" layoutY="264.0" mnemonicParsing="false" onAction="#onDelete" prefHeight="25.0" prefWidth="105.0" styleClass="buttons" text="Delete" />
       <ListView id="table" fx:id="lvFiles" layoutX="177.0" layoutY="107.0" prefHeight="394.0" prefWidth="539.0" />
       <Button layoutX="619.0" layoutY="64.0" mnemonicParsing="false" onAction="#listUser" prefHeight="32.0" prefWidth="97.0" styleClass="buttons" text="View users" />
+      <CheckBox fx:id="cbDeleteFile" layoutX="177.0" layoutY="501.0" mnemonicParsing="false" onAction="#onCheck" styleClass="cb-delete-file" text="Delete File on exit" />
    </children>
 </AnchorPane>
