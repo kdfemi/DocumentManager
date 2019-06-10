@@ -1,7 +1,33 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-.uploaded{
-    -fx-text-fill: green;
+.container{
+    -fx-background-color: rgb(219, 79, 93);
 }
-.notUploaded{
-    -fx-text-fill:red ;
+.buttons{
+    -fx-background-color: rgb(104, 154, 218);
+    -fx-text-fill: white;
+    -fx-border-style: solid;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-color: transparent;
+}
+.txt-fields{
+    -fx-border-color: transparent transparent white transparent ;
+    -fx-border-style: solid;
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(219, 79, 93, 0.5);
+    -fx-text-fill:white; 
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.txt-fields:focused{
+     -fx-border-color: transparent transparent rgb(104, 154, 218) transparent ;
+}
+.lb-id{
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: Monospaced;
+    
+}
+#table{
+    -fx-font-size: 14px;
 }

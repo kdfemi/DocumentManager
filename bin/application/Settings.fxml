@@ -5,11 +5,14 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="478.0" prefWidth="448.0" styleClass="container" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
+<AnchorPane prefHeight="478.0" prefWidth="448.0" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="203.0" layoutY="38.0" text="SETTINGS" />
+      <Label alignment="CENTER" layoutX="78.0" layoutY="6.0" prefHeight="49.0" prefWidth="304.0" styleClass="lb-id" text="SETTINGS">
+         <font>
+            <Font name="Monospaced Bold" size="22.0" />
+         </font></Label>
       <TextField fx:id="txtIp" layoutX="109.0" layoutY="100.0" prefHeight="25.0" prefWidth="311.0" styleClass="txt-fields" />
       <Label layoutX="43.0" layoutY="104.0" styleClass="lb-id" text="IP" />
       <Label layoutX="38.0" layoutY="239.0" styleClass="lb-id" text="PASSWORD" />

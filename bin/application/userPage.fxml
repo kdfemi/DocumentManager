@@ -8,15 +8,15 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="lblUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="18.0" layoutY="14.0" prefHeight="50.0" prefWidth="764.0" text="Label" textAlignment="CENTER" textFill="#ed8e5f">
+      <Label fx:id="lblUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="18.0" layoutY="14.0" prefHeight="50.0" prefWidth="764.0" text="Label" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Californian FB" size="32.0" />
          </font></Label>
-      <Button id="logout-btn" fx:id="logout" layoutX="297.0" layoutY="542.0" mnemonicParsing="false" onAction="#signOut" prefHeight="32.0" prefWidth="206.0" text="Logout" />
-      <Button fx:id="create" layoutX="61.0" layoutY="190.0" mnemonicParsing="false" onAction="#onCreate" styleClass="buttons" text="Create" />
-      <Button fx:id="upload" layoutX="61.0" layoutY="229.0" mnemonicParsing="false" onAction="#onUpload" styleClass="buttons" text="Upload" />
-      <Button fx:id="delete" layoutX="63.0" layoutY="264.0" mnemonicParsing="false" onAction="#onDelete" styleClass="buttons" text="Delete" />
-      <ListView fx:id="lvFiles" layoutX="177.0" layoutY="107.0" prefHeight="394.0" prefWidth="539.0" />
-      <Button id="user-btn" layoutX="643.0" layoutY="501.0" mnemonicParsing="false" onAction="#listUser" prefHeight="32.0" prefWidth="73.0" style="-fx-background-color: white;" text="View users" />
+      <Button fx:id="logout" layoutX="297.0" layoutY="542.0" mnemonicParsing="false" onAction="#signOut" prefHeight="32.0" prefWidth="206.0" styleClass="buttons" text="Logout" />
+      <Button fx:id="create" layoutX="61.0" layoutY="190.0" mnemonicParsing="false" onAction="#onCreate" prefHeight="25.0" prefWidth="105.0" styleClass="buttons" text="Create" />
+      <Button fx:id="upload" layoutX="61.0" layoutY="229.0" mnemonicParsing="false" onAction="#onUpload" prefHeight="25.0" prefWidth="105.0" styleClass="buttons" text="Upload" />
+      <Button fx:id="delete" layoutX="63.0" layoutY="264.0" mnemonicParsing="false" onAction="#onDelete" prefHeight="25.0" prefWidth="105.0" styleClass="buttons" text="Delete" />
+      <ListView id="table" fx:id="lvFiles" layoutX="177.0" layoutY="107.0" prefHeight="394.0" prefWidth="539.0" />
+      <Button layoutX="619.0" layoutY="64.0" mnemonicParsing="false" onAction="#listUser" prefHeight="32.0" prefWidth="97.0" styleClass="buttons" text="View users" />
    </children>
 </AnchorPane>

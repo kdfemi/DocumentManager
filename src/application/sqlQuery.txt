@@ -1,0 +1,22 @@
+CREATE DATABASE  IF NOT EXISTS `docmanager` ;
+USE `docmanager`;
+
+CREATE TABLE IF NOT EXISTS`files` (
+  `filename` char(100) NOT NULL,
+  `file` mediumblob NOT NULL,
+  `uploaded` tinyint(1) NOT NULL DEFAULT '0',
+  `uploaderId` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(24) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

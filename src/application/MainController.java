@@ -1,16 +1,25 @@
 package application;
 
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.prefs.Preferences;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -44,17 +53,43 @@ public class MainController {
 		System.out.println(getClass().getName()+"check" );
 		loader.setController(this);
 		Scene scene = new Scene(loader.load());
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setTitle("Document Manager -signin");
 		primaryStage.centerOnScreen();
 		primaryStage.setResizable(false);
-		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		
+	} 
+	@FXML
+	public void initialize(){
+		StringBuilder sb = new StringBuilder();
+		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
+		String so ="";
+		try {
+		
+			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			Statement statement = connect.createStatement();
+			while((so=br.readLine()) != null) {
+				sb.append(so);
+			}
+			String[] queries = sb.toString().split(";");
+			for(String query : queries) {
+				if(!query.isEmpty()) {
+					statement.executeUpdate(query);
+				}
+			}	
+			 
+		} catch (IOException | SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 	}
-
+	
 	@FXML
 	private void onLogin(ActionEvent e){
-		
+
 		lblStatus.setText("");
 		String username = txtUsername.getText();
 		String password = txtPassword.getText(); 
@@ -77,7 +112,7 @@ public class MainController {
 				
 			}else lblStatus.setText("Username and password must be 4 or more charcters long");
 				
-			}else lblStatus.setText("field cannot be empty");	
+			}else lblStatus.setText("fields cannot be empty");	
 	}
 	
 	@FXML
@@ -85,7 +120,7 @@ public class MainController {
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
 		Alert alert = new Alert(AlertType.NONE);
-		lblStatus.setText("");
+		lblStatus.setText(""); 
 		try {
 			if(!username.isEmpty() && !password.isEmpty()) {
 				
@@ -107,7 +142,7 @@ public class MainController {
 					alert.show();
 				}else lblStatus.setText("Username and password must be 4 or more charcters long");
 					
-				}else lblStatus.setText("field cannot be empty");	
+				}else lblStatus.setText("fields cannot be empty");	
 
 				
 		} catch (SQLException e) {
@@ -166,7 +201,7 @@ public class MainController {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			lblError.setText(e.getMessage());
+			lblError.setText("Cannot connect to database");
 			return null;
 		}
 		return false;

@@ -42,10 +42,11 @@ import javafx.stage.Stage;
 
 public class UserPageController implements Initializable {
 	
-	private final String dbUrl;
-	private final String dbuser ;
-	private final String dbpassword ;
+//	String dbUrl = "jdbc:mysql://10.152.2.39:3306/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	private final Preferences preferences;
+	private final String dbUrl;
+	private final String dbuser;
+	private final String dbpassword; 
 	int userId;
 	private String user;
 	private ObservableList<String> listFiles = FXCollections.observableArrayList();
@@ -57,9 +58,8 @@ public class UserPageController implements Initializable {
 	@FXML ListView<String> lvFiles;
 	private Stage primaryStage;
 	
-	
+	 
 	public UserPageController(User user)  {
-	
 		preferences = Preferences.userRoot().node("DocumentManager");
 		this.dbpassword = preferences.get("password","pass");
 		this.dbuser = preferences.get("username","user");
@@ -71,9 +71,12 @@ public class UserPageController implements Initializable {
 		this.user = user.getUser();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("userPage.fxml"));
 		loader.setController(this);
-		Scene scene = new Scene(loader.load()); 
+		Scene scene = new Scene(loader.load());
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		primaryStage.setScene(scene);
+		
+		primaryStage.setScene(scene); 
+		
+		 //why not working
 		primaryStage.setTitle("Document Manager");
 		primaryStage.centerOnScreen();
 		}catch(IOException e) {
