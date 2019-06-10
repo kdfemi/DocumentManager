@@ -25,9 +25,10 @@ public class SettingsController {
 	TextField txtIp, txtPort, txtUsername;
 	@FXML
 	PasswordField txtPassword;
-	
-	public SettingsController() throws IOException {
+	MainController mainController;
+	public SettingsController(MainController mainController) throws IOException {	
 		
+		this.mainController = mainController;
 		preferences = Preferences.userRoot().node("DocumentManager");
 		
 		primaryStage = new Stage();
@@ -72,6 +73,7 @@ public class SettingsController {
 				primaryStage.close();
 			}
 		}
+		mainController.initialize();
 		primaryStage.close();
 	}
 	

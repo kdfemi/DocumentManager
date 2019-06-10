@@ -24,6 +24,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -51,13 +52,14 @@ public class UserPageController implements Initializable {
 	private String user;
 	private ObservableList<String> listFiles = FXCollections.observableArrayList();
 	Alert alert = new Alert(AlertType.NONE); 
-	Alert prompt = new Alert(AlertType.NONE); 
+	Alert prompt = new Alert(AlertType.NONE);  
 	
 	@FXML Label lblUsername;
 	@FXML Button logout, create, delete, upload;
 	@FXML ListView<String> lvFiles;
-	private Stage primaryStage;
 	
+	private Stage primaryStage;
+	private Scene scene;
 	 
 	public UserPageController(User user)  {
 		preferences = Preferences.userRoot().node("DocumentManager");
@@ -71,11 +73,15 @@ public class UserPageController implements Initializable {
 		this.user = user.getUser();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("userPage.fxml"));
 		loader.setController(this);
-		Scene scene = new Scene(loader.load());
+		this.scene = new Scene(loader.load());
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
+		scene.setOnMousePressed(e->{
+			if(!lvFiles.equals(e.getSource())) {
+				lvFiles.getParent().requestFocus();
+				disableButtons();
+			}
+		});
 		primaryStage.setScene(scene); 
-		
 		 //why not working
 		primaryStage.setTitle("Document Manager");
 		primaryStage.centerOnScreen();
@@ -95,13 +101,13 @@ public class UserPageController implements Initializable {
 		lvFiles.setItems(listFiles);
 		getFiles();
 		System.out.println(user+" and "+userId);
-		upload.setDisable(true);
-		delete.setDisable(true);
-		
+		disableButtons();
+
 		lvFiles.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 		        @Override
 		        public void handle(MouseEvent event) {
+
 		    		upload.setDisable(false);
 		    		delete.setDisable(false);
 		    		if(event.getClickCount()>1) {
@@ -153,7 +159,7 @@ public class UserPageController implements Initializable {
 	}
 //	
 	@FXML
-	public void signOut(ActionEvent event) {
+	public void signOut(ActionEvent event) throws SQLException {
 		try {
 			MainController mainController = new MainController();
 			mainController.showStage();
@@ -165,8 +171,8 @@ public class UserPageController implements Initializable {
 		
 	}
 	@FXML
-	public void listUser() {
-		
+	public void listUser(ActionEvent event) {
+		disableButtons();
 		Alert alert = new Alert(AlertType.NONE);
 		String userList = "";
 		try{
@@ -194,6 +200,7 @@ public class UserPageController implements Initializable {
 	 */
 	@FXML
 	public void onCreate(ActionEvent event) {
+		((Button)event.getTarget()).requestFocus();
 		 FileChooser fc = new FileChooser();
 		 fc.setInitialDirectory(new File(System.getProperty("user.home")+"/desktop"));
 		 fc.getExtensionFilters().addAll(new ExtensionFilter("Documents","*.pdf","*.doc","*.docx","*.txt","*.xls","*.ppt"));
@@ -233,7 +240,7 @@ public class UserPageController implements Initializable {
 	
 	@FXML
 	public void onDelete(ActionEvent event) {
-		
+		((Button)event.getTarget()).requestFocus();
 		String file = lvFiles.getSelectionModel().getSelectedItem().split("\t")[0];
 		Connection connect = null;
 		PreparedStatement statement=null;
@@ -303,7 +310,7 @@ public class UserPageController implements Initializable {
 	
 	@FXML
 	public void onUpload(ActionEvent event) {
-		
+		((Button)event.getTarget()).requestFocus();
 		try {
 			String file = lvFiles.getSelectionModel().getSelectedItem().split("\t")[0];
 			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
@@ -361,33 +368,10 @@ public class UserPageController implements Initializable {
 		primaryStage.show();
 	}
 	
-//	private ArrayList<String> tabCount(ObservableList<String>contents) {
-//		ArrayList<String>contents2 = new ArrayList<>();
-//		int longest =0;
-//		//getting longest
-//		for(String content : contents) {
-//			if(longest < content.trim().split("%S")[0].length()) {
-//				longest = content.trim().split("%S")[0].length();
-//			}		
-//		}
-//		System.out.println("longes "+longest+"\n********************************************");
-//		
-//		for(String content : contents) {
-//			String tabs="\t";
-//			int width = (longest-content.trim().split("%S")[0].length())+3;	
-//			System.out.println("content "+content.trim().split("%S")[0].length());
-//			System.out.println("width "+width);
-//			tabs += String.format( "%"+width+ "s","");
-//			String text = content.replace("%S", tabs);	
-//			System.out.println("tab2 "+tabs.length()+"\n********************************************");
-//			contents2.add(text);
-//		}
-//		contents.clear();
-//		contents.addAll(contents2);
-//		return contents2;
-//		
-//	}
-
+public void disableButtons() {
+	delete.setDisable(true); 
+	upload.setDisable(true);
+}
 		
 
 }

@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
 import javafx.event.ActionEvent;
@@ -34,6 +35,7 @@ public class MainController {
 	private final String dbUrl;
 	private final String dbuser ;
 	private final String dbpassword ;
+	private final Connection connect;
 	int userId; //checking something
 	
 	@FXML
@@ -41,13 +43,13 @@ public class MainController {
 	@FXML
 	Label lblStatus, lblError;
 	static String user ;
-	public MainController() throws IOException {
+	public MainController() throws IOException, SQLException {
 		
 		preferences = Preferences.userRoot().node("DocumentManager");
 		this.dbpassword = preferences.get("password","pass");
 		this.dbuser = preferences.get("username","user");
 		this.dbUrl = "jdbc:mysql://"+preferences.get("ip","10.152.2.39")+":"+preferences.get("port","3306")+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		
+		this.connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 		primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
 		System.out.println(getClass().getName()+"check" );
@@ -62,6 +64,7 @@ public class MainController {
 	} 
 	@FXML
 	public void initialize(){
+		System.out.println("Worked");
 		StringBuilder sb = new StringBuilder();
 		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
 		String so ="";
@@ -78,7 +81,7 @@ public class MainController {
 				if(!query.isEmpty()) {
 					statement.executeUpdate(query);
 				}
-			}	
+			}	 
 			 
 		} catch (IOException | SQLException e1) {
 			// TODO Auto-generated catch block
@@ -86,7 +89,6 @@ public class MainController {
 		}
 		
 	}
-	
 	@FXML
 	private void onLogin(ActionEvent e){
 
@@ -126,13 +128,13 @@ public class MainController {
 				
 				if(username.length()>=4 && username.length()>=4) {
 					
-					Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+//					Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 					PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
 					statement.setString(1, username);
 					statement.setString(2, password);
 					int result = statement.executeUpdate();
 			
-					lblStatus.setText("user Created. Login to continue");
+			 		lblStatus.setText("user Created. Login to continue");
 					txtUsername.clear();
 					txtPassword.clear();
 					alert.setAlertType(AlertType.INFORMATION);
@@ -161,7 +163,7 @@ public class MainController {
 	
 	@FXML
 	public void onSettings() throws IOException {
-		SettingsController settingsController = new SettingsController();
+		SettingsController settingsController = new SettingsController(this);
 		settingsController.showStage();
 	}
 	
