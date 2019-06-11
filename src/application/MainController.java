@@ -84,6 +84,7 @@ public class MainController {
 			 
 		} catch (IOException | SQLException e1) {
 			// TODO Auto-generated catch block
+			lblError.setText("Cannot connect to database");
 			e1.printStackTrace();
 		}
 		
