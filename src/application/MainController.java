@@ -1,10 +1,6 @@
 package application;
 
-import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,13 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -32,9 +26,7 @@ public class MainController {
 
 	private final Stage primaryStage;
 	private final Preferences preferences;
-	private final String dbUrl;
-	private final String dbuser ;
-	private final String dbpassword ;
+	private String dbUrl, dbuser, dbpassword, dbIp, dbPort;
 	private  Connection connect;
 	int userId; //checking something
 	
@@ -48,7 +40,9 @@ public class MainController {
 		preferences = Preferences.userRoot().node("DocumentManager");
 		this.dbpassword = preferences.get("password","pass");
 		this.dbuser = preferences.get("username","user");
-		this.dbUrl = "jdbc:mysql://"+preferences.get("ip","10.152.2.39")+":"+preferences.get("port","3306")+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		this.dbIp = preferences.get("ip","10.152.2.39");
+		this.dbPort = preferences.get("port","3306");
+		this.dbUrl = "jdbc:mysql://"+dbIp+":"+dbPort+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 //		connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 		primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
@@ -64,6 +58,12 @@ public class MainController {
 	} 
 	@FXML
 	public void initialize(){
+		 
+		this.dbpassword = preferences.get("password","pass");
+		this.dbuser = preferences.get("username","user");
+		this.dbIp = preferences.get("ip","10.152.2.39");
+		this.dbPort = preferences.get("port","3306");
+		
 		StringBuilder sb = new StringBuilder();
 		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
 		String so ="";
@@ -81,7 +81,7 @@ public class MainController {
 					statement.executeUpdate(query);
 				}
 			}	 
-			 
+			
 		} catch (IOException | SQLException e1) {
 			// TODO Auto-generated catch block
 			lblError.setText("Cannot connect to database");
