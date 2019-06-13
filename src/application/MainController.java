@@ -10,8 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -57,19 +63,24 @@ public class MainController {
 	} 
 	@FXML
 	public void initialize(){
-		
-//		new Thread(new Runnable() {	
-//			@Override
-//			public void run() {
-//				// TODO Auto-generated method stub
-//				System.out.println("Works");
-//				boolean check = table();
-//				if(check) {
-//					lblError.setText("Error");
-//				}
-//			}
-//		}).start();	
-		table();
+		Runnable runnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				System.out.println("ttt");
+				table();
+			}
+		};
+		Thread t = new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Platform.runLater(runnable);
+			}
+		});	
+//		t.setDaemon(true);
+		t.start();
 	}
 	@FXML
 	private void onLogin(ActionEvent e){
@@ -85,6 +96,7 @@ public class MainController {
 				
 				if(userExist(username, password)) {
 					try {
+						lblError.setText("");
 						lblStatus.setText("user found");
 						UserPageController userPageController = new UserPageController(new User(username,userId));
 						userPageController.showStage();
@@ -105,13 +117,12 @@ public class MainController {
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
 		Alert alert = new Alert(AlertType.NONE);
-		lblError.setText("");
 		lblStatus.setText(""); 
 		try {
 			if(!username.isEmpty() && !password.isEmpty()) {
 				
 				if(username.length()>=4 && username.length()>=4) {
-					
+					lblError.setText("");
 					connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 					PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
 					statement.setString(1, username);
@@ -203,6 +214,13 @@ public class MainController {
 		this.dbIp = preferences.get("ip","10.152.2.39");
 		this.dbPort = preferences.get("port","3306");
 		this.dbUrl = "jdbc:mysql://"+dbIp+":"+dbPort+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		try {
+			DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			lblError.setText("Cannot connect to database");
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean table() {
