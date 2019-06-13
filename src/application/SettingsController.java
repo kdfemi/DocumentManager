@@ -70,6 +70,7 @@ public class SettingsController {
 				a= new Alert (AlertType.INFORMATION);
 				a.setContentText("Done");
 				a.showAndWait();
+				mainController.lblError.setText("");
 				mainController.setSettings();
 				primaryStage.close();
 			}
