@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 public class MainController {
 
 	private final Stage primaryStage;
-	private final Preferences preferences;
+	private Preferences preferences;
 	private String dbUrl, dbuser, dbpassword, dbIp, dbPort;
 	private  Connection connect;
 	int userId; //checking something
@@ -58,36 +58,15 @@ public class MainController {
 	} 
 	@FXML
 	public void initialize(){
-		 
-		this.dbpassword = preferences.get("password","pass");
-		this.dbuser = preferences.get("username","user");
-		this.dbIp = preferences.get("ip","10.152.2.39");
-		this.dbPort = preferences.get("port","3306");
-		
-		StringBuilder sb = new StringBuilder();
-		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
-		String so ="";
-		try {
 	
-			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
-			Statement statement = connect.createStatement();
-			while((so=br.readLine()) != null) {
-				sb.append(so);
-			}
-			String[] queries = sb.toString().split(";");
-			for(String query : queries) {
-				if(!query.isEmpty()) {
-					statement.executeUpdate(query);
-				}
-			}	 
-			
-		} catch (IOException | SQLException e1) {
-			// TODO Auto-generated catch block
-			lblError.setText("Cannot connect to database");
-			e1.printStackTrace();
-		}
-		
+//		new Thread(new Runnable() {	
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				table();
+//			}
+//		}).start();	
+		table();
 	}
 	@FXML
 	private void onLogin(ActionEvent e){
@@ -95,7 +74,8 @@ public class MainController {
 		lblStatus.setText("");
 		String username = txtUsername.getText();
 		String password = txtPassword.getText(); 
-		
+		System.out.println(username +' '+password);
+		System.out.printf("%s\n%s\n%s\n%s\n%s",dbUrl, dbuser, dbpassword, dbIp, dbPort);
 		if(!username.isEmpty() && !password.isEmpty()) {
 			
 			if(username.length()>=4 && username.length()>=4) {
@@ -177,7 +157,7 @@ public class MainController {
 	private Boolean userExist(String username, String password) {
 		try {
 			//connect to database and prepstatement
-			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 			PreparedStatement statement = connect.prepareStatement("SELECT * FROM user WHERE username=? AND password=?");
 			statement.setString(1, username);
 			statement.setString(2, password);
@@ -213,4 +193,42 @@ public class MainController {
 
 		primaryStage.show();
 	}
+	public void setSettings() {
+		this.dbpassword = preferences.get("password","pass");
+		this.dbuser = preferences.get("username","user");
+		this.dbIp = preferences.get("ip","10.152.2.39");
+		this.dbPort = preferences.get("port","3306");
+		this.dbUrl = "jdbc:mysql://"+dbIp+":"+dbPort+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	}
+	
+	public boolean table() {
+		StringBuilder sb = new StringBuilder();
+		InputStream stream = this.getClass().getResourceAsStream("sqlQuery.txt");
+		String so ="";
+		try {
+	
+			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			Statement statement = connect.createStatement();
+			while((so=br.readLine()) != null) {
+				sb.append(so);
+			}
+			String[] queries = sb.toString().split(";");
+			for(String query : queries) {
+				if(!query.isEmpty()) {
+					statement.executeUpdate(query);
+				}
+			}	
+			return true;
+			
+		} catch (IOException | SQLException e1) {
+			// TODO Auto-generated catch block
+			lblError.setText("Cannot connect to database");
+			e1.printStackTrace();
+		}
+		return false;
+	}
+//	public void setUrl(String ip, String port, String username, String password) {
+//		return this.dbUrl = "jdbc:mysql://"+ip+":"+port+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+//	}
 }

@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `ocmanager` ;
-USE `ocmanager`;
+CREATE DATABASE  IF NOT EXISTS `docmanager` ;
+USE `docmanager`;
 
 CREATE TABLE IF NOT EXISTS`files` (
   `filename` char(100) NOT NULL,

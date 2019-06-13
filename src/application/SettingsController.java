@@ -43,7 +43,7 @@ public class SettingsController {
 	}
 	public void showStage() {
 		primaryStage.initModality(Modality.APPLICATION_MODAL);
-		primaryStage.showAndWait();
+		primaryStage.show();
 	}
 	@FXML
 	public void onCancel() {
@@ -70,14 +70,9 @@ public class SettingsController {
 				a= new Alert (AlertType.INFORMATION);
 				a.setContentText("Done");
 				a.showAndWait();
+				mainController.setSettings();
 				primaryStage.close();
 			}
-		}
-		try {
-			mainController.initialize();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		primaryStage.close();
 	}
@@ -85,7 +80,6 @@ public class SettingsController {
 	@FXML
 	public void initialize() {
 		// TODO Auto-generated method stub
-		
 		txtIp.setText(preferences.get("ip","10.152.2.39"));
 		txtPort.setText(preferences.get("port","3306"));
 		txtUsername.setText(preferences.get("username","user"));
