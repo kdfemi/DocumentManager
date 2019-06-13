@@ -73,7 +73,12 @@ public class SettingsController {
 				primaryStage.close();
 			}
 		}
-		mainController.initialize();
+		try {
+			mainController.initialize();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		primaryStage.close();
 	}
 	

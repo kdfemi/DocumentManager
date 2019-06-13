@@ -35,11 +35,11 @@ public class MainController {
 	private final String dbUrl;
 	private final String dbuser ;
 	private final String dbpassword ;
-	private final Connection connect;
+	private  Connection connect;
 	int userId; //checking something
 	
 	@FXML
-	TextField txtUsername,txtPassword ;
+	TextField txtUsername,txtPassword;
 	@FXML
 	Label lblStatus, lblError;
 	static String user ;
@@ -49,16 +49,16 @@ public class MainController {
 		this.dbpassword = preferences.get("password","pass");
 		this.dbuser = preferences.get("username","user");
 		this.dbUrl = "jdbc:mysql://"+preferences.get("ip","10.152.2.39")+":"+preferences.get("port","3306")+"/docmanager?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		this.connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+//		connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 		primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
-		System.out.println(getClass().getName()+"check" );
+		System.out.println(preferences.get("port","3306")+" check" );
 		loader.setController(this);
 		Scene scene = new Scene(loader.load());
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setTitle("Document Manager -signin");
 		primaryStage.centerOnScreen();
-		primaryStage.setResizable(false);
+		primaryStage.setResizable(false); 
 		primaryStage.setScene(scene);
 		
 	} 
@@ -70,7 +70,7 @@ public class MainController {
 		try {
 	
 			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-			Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+			connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 			Statement statement = connect.createStatement();
 			while((so=br.readLine()) != null) {
 				sb.append(so);
@@ -128,7 +128,7 @@ public class MainController {
 				
 				if(username.length()>=4 && username.length()>=4) {
 					
-//					Connection connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
+					connect = DriverManager.getConnection(dbUrl, dbuser, dbpassword);
 					PreparedStatement statement = connect.prepareStatement("INSERT INTO user(username, password) VALUES(?,?)");
 					statement.setString(1, username);
 					statement.setString(2, password);
