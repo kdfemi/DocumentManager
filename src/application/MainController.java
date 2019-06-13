@@ -33,7 +33,7 @@ public class MainController {
 	@FXML
 	TextField txtUsername,txtPassword;
 	@FXML
-	Label lblStatus, lblError;
+	public Label lblStatus, lblError;
 	static String user ;
 	public MainController() throws IOException, SQLException {
 		
@@ -54,23 +54,26 @@ public class MainController {
 		primaryStage.centerOnScreen();
 		primaryStage.setResizable(false); 
 		primaryStage.setScene(scene);
-		
 	} 
 	@FXML
 	public void initialize(){
-	
+		
 //		new Thread(new Runnable() {	
 //			@Override
 //			public void run() {
 //				// TODO Auto-generated method stub
-//				table();
+//				System.out.println("Works");
+//				boolean check = table();
+//				if(check) {
+//					lblError.setText("Error");
+//				}
 //			}
 //		}).start();	
 		table();
 	}
 	@FXML
 	private void onLogin(ActionEvent e){
-
+		lblError.setText("");
 		lblStatus.setText("");
 		String username = txtUsername.getText();
 		String password = txtPassword.getText(); 
@@ -102,6 +105,7 @@ public class MainController {
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
 		Alert alert = new Alert(AlertType.NONE);
+		lblError.setText("");
 		lblStatus.setText(""); 
 		try {
 			if(!username.isEmpty() && !password.isEmpty()) {
